@@ -1,5 +1,5 @@
 /* Big Tic-Tac-Toe offline cache */
-const CACHE = 'btt-v1';
+const CACHE = 'btt-v2';
 const SHELL = [
   './',
   './index.html',
@@ -34,26 +34,42 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
+  /* Navigations: network first so a new version shows up immediately,
+     cache as the offline fallback. */
+  if (req.mode === 'navigate') {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      try {
+        const fresh = await fetch(req);
+        if (fresh && fresh.ok) cache.put('./index.html', fresh.clone());
+        return fresh;
+      } catch (err) {
+        return (await cache.match('./index.html')) ||
+          (await cache.match('./')) ||
+          new Response('Offline', { status: 503, statusText: 'Offline' });
+      }
+    })());
+    return;
+  }
+
+  /* Assets: cache first, refresh in the background. */
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const cached = await cache.match(req, { ignoreSearch: true });
 
-    const network = fetch(req)
-      .then((res) => {
-        if (res && res.ok) cache.put(req, res.clone());
-        return res;
-      })
-      .catch(() => null);
-
-    if (cached) return cached;
-
-    const fresh = await network;
-    if (fresh) return fresh;
-
-    if (req.mode === 'navigate') {
-      const shell = await cache.match('./index.html');
-      if (shell) return shell;
+    if (cached) {
+      fetch(req)
+        .then((res) => { if (res && res.ok) cache.put(req, res.clone()); })
+        .catch(() => {});
+      return cached;
     }
-    return new Response('Offline', { status: 503, statusText: 'Offline' });
+
+    try {
+      const fresh = await fetch(req);
+      if (fresh && fresh.ok) cache.put(req, fresh.clone());
+      return fresh;
+    } catch (err) {
+      return new Response('Offline', { status: 503, statusText: 'Offline' });
+    }
   })());
 });

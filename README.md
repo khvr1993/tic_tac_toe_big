@@ -1,19 +1,20 @@
 # Big Tic-Tac-Toe
 
-A **15 × 15 five-in-a-row** game (Gomoku) that runs entirely in the browser. No build step, no dependencies — one HTML file plus a few PWA assets.
+A **12 × 12 five-in-a-row** game (Gomoku) that runs entirely in the browser. No build step, no dependencies — one HTML file plus a few PWA assets.
 
 Play: **https://khvr1993.github.io/tic_tac_toe_big/**
 
 ## Features
 
-- **Coin toss** decides who takes ✕ (black) and moves first.
+- **Landing screen** to pick your side, opponent and level before every match. No coin toss.
+- **◯ O always moves first**, then ✕ X. Choosing ✕ means you play second.
 - **Two modes** — hot-seat for two players on one device, or a computer opponent.
 - **Three AI levels** — Easy, Medium and Hard. The AI scores every candidate point by line patterns (open fours, open threes, double threats) and Hard adds a two-ply lookahead.
 - **Win detection** in every direction, including overlines (six or more still wins).
 - **Hints** — ask the engine for a suggestion; the cell pulses and the coordinate appears in a toast.
 - **Undo** — in AI mode it rewinds the pair so the turn comes back to you.
-- **Replay** — scrub the whole game with the slider or jump to any move in the log.
-- **Local stats** — wins/losses/draws per difficulty, persisted in `localStorage`.
+- **Moves popup** — a button opens the full move list with a replay scrubber, so the board stays uncluttered during play.
+- **Local stats** — wins/losses/draws per mode and difficulty, persisted in `localStorage`.
 - **Polish** — animated stone drops, last-move ring, winning line, sound toggle, keyboard navigation (arrows + Enter), responsive board.
 - **Installable PWA** — add it to your phone's home screen and play offline.
 
@@ -33,11 +34,17 @@ On desktop Chrome/Edge the same **Install app** button installs it as a standalo
 
 ## Rules
 
-- The board is 15 × 15 (columns `A–O`, rows `1–15`).
-- ✕ (black) moves first, then ◯ (white).
+- The board is 12 × 12 (columns `A–L`, rows `1–12`).
+- ◯ O always moves first, then ✕ X.
 - The first player to line up **five** stones in a row, column or diagonal wins.
 - Six or more in a row also counts as a win.
 - If the board fills with no five, the game is a draw.
+
+## Screens
+
+1. **Landing** — choose ✕ or ◯, vs Computer or 2 Players, difficulty, then Start.
+2. **Game** — the board plus a slim panel: turn status, New game / Undo / Hint, Moves and Menu.
+3. **Moves popup** — the numbered move list and replay slider.
 
 ## Run locally
 
@@ -53,7 +60,7 @@ A local server is needed for the service worker (offline mode); opening `index.h
 ```
 index.html              the whole game (markup, styles, logic)
 manifest.webmanifest    PWA metadata
-sw.js                   offline cache (stale-while-revalidate)
+sw.js                   offline cache (network-first pages, cache-first assets)
 icon.svg                vector icon
 pwa-*.png               install icons (192, 512, maskable)
 apple-touch-icon.png    iOS home-screen icon

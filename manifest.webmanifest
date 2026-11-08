@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Big Tic-Tac-Toe",
   "short_name": "BigTicTacToe",
-  "description": "15x15 five-in-a-row with a coin toss, a three-level computer opponent, hints and replay.",
+  "description": "12x12 five-in-a-row. Pick X or O, play a friend or a three-level computer opponent, with hints, undo and move history.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

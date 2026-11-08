@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>Big Tic-Tac-Toe · 15×15 Five in a Row</title>
-<meta name="description" content="Big Tic-Tac-Toe: a 15×15 five-in-a-row game with a coin toss, a three-level computer opponent, hints, replay and local stats.">
+<title>Big Tic-Tac-Toe · 12×12 Five in a Row</title>
+<meta name="description" content="Big Tic-Tac-Toe: a 12×12 five-in-a-row game. Pick ✕ or ◯, play a friend or a three-level computer opponent, with hints, undo and move history.">
 <meta name="theme-color" content="#0a0d12">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="BigTicTacToe">
-<meta property="og:title" content="Big Tic-Tac-Toe · 15×15 Five in a Row">
-<meta property="og:description" content="A 15×15 five-in-a-row game with a coin toss, a three-level computer opponent, hints and replay.">
+<meta property="og:title" content="Big Tic-Tac-Toe · 12×12 Five in a Row">
+<meta property="og:description" content="A 12×12 five-in-a-row game. Pick ✕ or ◯ and play a friend or the computer.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -29,8 +29,8 @@
   --panel:rgba(255,255,255,.045);
   --gold:#f0b64b;
   --teal:#5eead4;
-  --cell:clamp(20px, 4.3vmin, 37px);
-  --board:calc(var(--cell) * 15);
+  --cell:clamp(24px, 5.4vmin, 46px);
+  --board:calc(var(--cell) * 12);
   --gutter:22px;
 }
 *{box-sizing:border-box}
@@ -63,12 +63,12 @@ body::before{
     radial-gradient(900px 600px at 96% 108%, rgba(94,234,212,.08), transparent 60%);
 }
 button{font:inherit;color:inherit}
+[hidden]{display:none !important}
 
 /* ============================= shell ============================= */
 .app{position:relative;z-index:1;width:100%;max-width:1100px;display:flex;flex-direction:column}
 header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
 .head-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-.head-actions .btn[hidden]{display:none}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .emblem{
   width:46px;height:46px;flex:0 0 auto;border-radius:13px;
@@ -94,15 +94,54 @@ h1{
 }
 .brand p{margin:5px 0 0;color:var(--muted);font-size:11.5px;letter-spacing:.07em}
 
-main{
-  display:grid;
-  grid-template-columns:auto minmax(258px,306px);
-  gap:26px;
-  align-items:start;
-  justify-content:center;
+/* ============================= landing ============================= */
+.landing{display:flex;justify-content:center;padding:6px 0 30px}
+.landing-card{
+  width:min(520px,100%);
+  background:linear-gradient(180deg, rgba(30,37,47,.88), rgba(14,18,24,.92));
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:22px;
+  padding:26px 24px 22px;
+  box-shadow:0 30px 70px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter:blur(10px);
 }
+.eyebrow{margin:0 0 8px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-align:center}
+.landing h2{
+  margin:0;text-align:center;
+  font:600 clamp(24px,4vw,30px)/1.15 ui-serif,Georgia,serif;
+  letter-spacing:.01em;
+}
+.landing-sub{margin:8px 0 0;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.55}
+.landing-sub b{color:var(--gold);font-weight:600}
+.side-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 20px}
+.side{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  padding:16px 10px 13px;
+  border-radius:16px;
+  background:rgba(0,0,0,.26);
+  border:1px solid rgba(255,255,255,.08);
+  cursor:pointer;
+  transition:border-color .15s, background .15s, box-shadow .15s, transform .08s;
+}
+.side:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.16)}
+.side:active{transform:translateY(1px)}
+.side.on{
+  border-color:rgba(240,182,75,.62);
+  background:rgba(240,182,75,.10);
+  box-shadow:0 0 0 1px rgba(240,182,75,.22), 0 10px 26px rgba(240,182,75,.12);
+}
+.side .side-stone{position:relative;inset:auto;width:58px;height:58px;flex:0 0 auto}
+.side .side-stone .mark{font-size:26px}
+.side-label{font-size:13px;font-weight:600;letter-spacing:.01em}
+.side-tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.side.on .side-tag{color:var(--gold)}
+.opt-row{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}
+.opt-label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.record{margin:13px 0 0;text-align:center;color:var(--muted);font-size:11.5px;letter-spacing:.02em}
 
 /* ============================= board ============================= */
+.game{display:grid;grid-template-columns:auto minmax(250px,300px);gap:26px;align-items:start;justify-content:center}
 .board-area{display:flex;flex-direction:column;align-items:center;gap:16px;min-width:0}
 .board-grid{
   display:grid;
@@ -110,14 +149,14 @@ main{
   grid-template-rows:16px var(--board);
   gap:3px;
 }
-.cols{display:grid;grid-template-columns:repeat(15,var(--cell))}
-.rows{display:grid;grid-template-rows:repeat(15,var(--cell))}
+.cols{display:grid;grid-template-columns:repeat(12,var(--cell))}
+.rows{display:grid;grid-template-rows:repeat(12,var(--cell))}
 .cols span,.rows span{display:grid;place-items:center;font-size:10px;color:var(--muted);letter-spacing:.04em;user-select:none}
 .board-shell{position:relative;width:var(--board);height:var(--board)}
 .board{
   display:grid;
-  grid-template-columns:repeat(15,var(--cell));
-  grid-template-rows:repeat(15,var(--cell));
+  grid-template-columns:repeat(12,var(--cell));
+  grid-template-rows:repeat(12,var(--cell));
   width:100%;height:100%;
   border-radius:3px;
   overflow:hidden;
@@ -150,8 +189,8 @@ main{
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
-.cell:nth-child(15n){border-right:0}
-.cell:nth-child(n+211){border-bottom:0}
+.cell:nth-child(12n){border-right:0}
+.cell:nth-child(n+133){border-bottom:0}
 .cell:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--gold);z-index:2}
 .cell.filled{cursor:default}
 .board.locked .cell{cursor:default}
@@ -239,17 +278,20 @@ main{
   position:absolute;
   top:8px;
   right:8px;
-  z-index:3;
-  background:rgba(12,16,22,.88);
-  border:1px solid rgba(255,255,255,.16);
+  z-index:5;
+  appearance:none;
+  background:rgba(12,16,22,.9);
+  border:1px solid rgba(240,182,75,.45);
   color:var(--gold);
   font-size:10.5px;
-  letter-spacing:.14em;
+  letter-spacing:.12em;
   text-transform:uppercase;
-  padding:4px 9px;
+  padding:5px 10px;
   border-radius:999px;
   backdrop-filter:blur(4px);
+  cursor:pointer;
 }
+.badge:hover{background:rgba(240,182,75,.16)}
 .caption{margin:0;color:var(--muted);font-size:11.5px;letter-spacing:.04em;text-align:center}
 
 /* ============================= panel ============================= */
@@ -277,7 +319,7 @@ main{
 .seg{
   display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;
   background:rgba(0,0,0,.25);border:1px solid var(--line);
-  padding:3px;border-radius:10px;margin-bottom:8px;
+  padding:3px;border-radius:10px;margin-bottom:0;
 }
 .seg button{
   appearance:none;border:0;background:transparent;color:var(--muted);
@@ -292,15 +334,9 @@ main{
 }
 .seg-sm button{padding:7px 4px;font-size:12px}
 
-.score{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.score-item{
-  background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.05);
-  border-radius:9px;padding:7px 4px;text-align:center;
-}
-.score-item b{display:block;font-size:15px;font-variant-numeric:tabular-nums;font-weight:650}
-.score-item small{display:block;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:2px}
-
-.actions{display:grid;grid-template-columns:1fr auto auto;gap:6px;margin-top:10px}
+.actions{display:grid;grid-template-columns:1fr auto auto;gap:6px}
+.actions + .actions{margin-top:6px}
+.actions-2{grid-template-columns:1fr 1fr}
 .btn{
   appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);
   font-size:12.5px;font-weight:500;padding:9px 12px;border-radius:9px;cursor:pointer;
@@ -319,6 +355,10 @@ main{
 .btn.primary:hover{background:linear-gradient(180deg,#f8ce7e,#e3a53a)}
 .btn.ghost{background:transparent;border-color:rgba(94,234,212,.35);color:var(--teal)}
 .btn.icon{padding:8px 11px;font-size:11.5px}
+.btn.big{width:100%;padding:13px;font-size:14px;border-radius:11px}
+
+.help-list{margin:0;padding-left:16px;color:var(--muted);font-size:11.5px;line-height:1.75}
+.help-list b{color:var(--ink);font-weight:600}
 
 input[type=range]{
   width:100%;appearance:none;-webkit-appearance:none;background:transparent;
@@ -333,10 +373,33 @@ input[type=range]::-moz-range-track{height:4px;border-radius:99px;background:rgb
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:var(--gold)}
 input[type=range]:disabled{opacity:.35}
 
-.log-card{display:flex;flex-direction:column;flex:1;min-height:0}
+/* ============================= dialog ============================= */
+.overlay{
+  position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;
+  background:rgba(6,9,13,.62);
+  backdrop-filter:blur(4px);
+  animation:fadeIn .16s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.dialog{
+  width:min(470px,100%);
+  background:linear-gradient(180deg, rgba(30,37,47,.99), rgba(15,19,25,.99));
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 36px 90px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.dialog-head h3{margin:0;font:600 17px/1.2 ui-serif,Georgia,serif;letter-spacing:.04em}
+.dialog-sub{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 0 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+.dialog-sub .btn{padding:4px 9px;font-size:10.5px}
 .move-log{
   display:flex;flex-wrap:wrap;gap:4px;
-  overflow-y:auto;max-height:168px;padding-right:2px;scrollbar-width:thin;
+  overflow-y:auto;max-height:230px;min-height:56px;
+  padding-right:2px;scrollbar-width:thin;
 }
 .move-log::-webkit-scrollbar{width:6px}
 .move-log::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px}
@@ -354,75 +417,38 @@ input[type=range]:disabled{opacity:.35}
 .mv-stone.o{background:linear-gradient(150deg,#fff,#c9c3b5)}
 .empty-note{color:var(--muted);font-size:11.5px;padding:6px 2px}
 
-/* ============================= toast / overlay ============================= */
+/* ============================= toast ============================= */
 .toast{
   position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
   background:rgba(16,21,28,.94);border:1px solid rgba(255,255,255,.12);
   color:var(--ink);padding:9px 15px;border-radius:999px;font-size:12.5px;
   opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
-  z-index:60;backdrop-filter:blur(8px);white-space:nowrap;
+  z-index:80;backdrop-filter:blur(8px);white-space:nowrap;
   box-shadow:0 14px 34px rgba(0,0,0,.5);
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-.overlay{
-  position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:22px;
-  background:rgba(6,9,13,.74);backdrop-filter:blur(10px);
-  animation:fadeIn .2s ease;
-}
-.overlay[hidden]{display:none}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.toss{
-  width:min(420px,100%);text-align:center;
-  background:linear-gradient(180deg,rgba(30,37,47,.98),rgba(15,19,25,.98));
-  border:1px solid rgba(255,255,255,.11);border-radius:22px;
-  padding:30px 26px 26px;
-  box-shadow:0 36px 90px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.07);
-}
-.eyebrow{margin:0 0 4px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.toss h2{margin:8px 0 6px;font:600 24px/1.2 ui-serif,Georgia,serif;letter-spacing:.02em}
-.toss p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
-.toss p b{color:var(--gold);font-weight:600}
-.toss .btn{margin-top:16px;width:100%;padding:12px}
-.coin-wrap{perspective:800px;height:120px;display:grid;place-items:center;margin:16px 0 6px}
-.coin{
-  position:relative;width:98px;height:98px;
-  transform-style:preserve-3d;
-  transition:transform 1.75s cubic-bezier(.16,.76,.2,1);
-}
-.coin .face{
-  position:absolute;inset:0;border-radius:50%;
-  display:grid;place-items:center;
-  font:700 36px/1 ui-serif,Georgia,serif;
-  color:#4b3009;
-  background:radial-gradient(circle at 34% 27%,#fdeab4,#eab949 54%,#a9741a);
-  box-shadow:inset 0 0 0 5px rgba(255,255,255,.22), inset 0 -6px 14px rgba(120,70,0,.35), 0 12px 26px rgba(0,0,0,.55);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-.coin .face.back{
-  transform:rotateY(180deg);
-  background:radial-gradient(circle at 34% 27%,#f4f7fd,#b9c2d1 54%,#7b8697);
-  color:#243040;
-}
-.coin.spin-h{transform:rotateY(1800deg)}
-.coin.spin-t{transform:rotateY(1980deg)}
-
 /* ============================= responsive ============================= */
 @media (max-width:900px){
-  :root{--cell:clamp(18px,5.6vw,34px)}
-  main{grid-template-columns:1fr;justify-items:center;gap:18px}
+  :root{--cell:clamp(20px,6.2vw,44px)}
+  .game{grid-template-columns:1fr;justify-items:center;gap:18px}
   .panel{max-width:480px}
 }
-@media (max-width:520px){
-  :root{--cell:5.2vw;--gutter:17px}
-  body{padding:16px 10px 32px}
+@media (max-width:560px){
   header{flex-wrap:wrap;gap:10px;margin-bottom:16px}
   .head-actions{width:100%;justify-content:flex-end}
   h1{font-size:16px;letter-spacing:.1em}
   .brand p{display:none}
   .emblem{width:40px;height:40px;font-size:15px}
-  .move-log{max-height:112px}
+}
+@media (max-width:520px){
+  :root{--cell:7.1vw;--gutter:16px}
+  body{padding:16px 10px 32px}
+  .landing-card{padding:22px 16px 18px;border-radius:18px}
+  .side-pick{gap:8px}
+  .side{padding:13px 8px 11px}
+  .side .side-stone{width:50px;height:50px}
+  .move-log{max-height:180px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms !important;transition-duration:.001ms !important}
@@ -437,7 +463,7 @@ input[type=range]:disabled{opacity:.35}
       <div class="emblem" aria-hidden="true">✕◯</div>
       <div>
         <h1>Big Tic-Tac-Toe</h1>
-        <p>15 × 15 · first to five in a row</p>
+        <p>12 × 12 · first to five in a row</p>
       </div>
     </div>
     <div class="head-actions">
@@ -446,77 +472,113 @@ input[type=range]:disabled{opacity:.35}
     </div>
   </header>
 
-  <main>
-    <section class="board-area">
+  <!-- ============================ landing ============================ -->
+  <section class="landing" id="landing">
+    <div class="landing-card">
+      <p class="eyebrow">12 × 12 · five in a row</p>
+      <h2>Choose your side</h2>
+      <p class="landing-sub" id="sideNote">◯ O always moves first.</p>
+
+      <div class="side-pick" id="sidePick">
+        <button type="button" class="side" data-side="1" aria-pressed="false">
+          <span class="stone x side-stone"><span class="mark">✕</span></span>
+          <span class="side-label">Play ✕</span>
+          <span class="side-tag" id="tagX">moves second</span>
+        </button>
+        <button type="button" class="side" data-side="2" aria-pressed="true">
+          <span class="stone o side-stone"><span class="mark">◯</span></span>
+          <span class="side-label">Play ◯</span>
+          <span class="side-tag" id="tagO">moves first</span>
+        </button>
+      </div>
+
+      <div class="opt-row">
+        <span class="opt-label">Opponent</span>
+        <div class="seg" id="segMode">
+          <button type="button" data-mode="ai">vs Computer</button>
+          <button type="button" data-mode="local">2 Players</button>
+        </div>
+      </div>
+
+      <div class="opt-row" id="diffRow">
+        <span class="opt-label">Level</span>
+        <div class="seg seg-sm" id="segDiff">
+          <button type="button" data-diff="easy">Easy</button>
+          <button type="button" data-diff="medium">Medium</button>
+          <button type="button" data-diff="hard">Hard</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn primary big" id="btnStart">Start game</button>
+      <p class="record" id="landingRecord">No games played yet</p>
+    </div>
+  </section>
+
+  <!-- ============================= game ============================= -->
+  <section class="game" id="game" hidden>
+    <div class="board-area">
       <div class="board-grid">
         <div aria-hidden="true"></div>
         <div class="cols" id="colCoords" aria-hidden="true"></div>
         <div class="rows" id="rowCoords" aria-hidden="true"></div>
         <div class="board-shell">
-          <div class="board" id="board" role="grid" aria-label="15 by 15 game board"></div>
-          <svg class="winline" id="winSvg" viewBox="0 0 150 150" preserveAspectRatio="none" aria-hidden="true"></svg>
-          <div class="badge" id="reviewBadge" hidden>Replay</div>
+          <div class="board" id="board" role="grid" aria-label="12 by 12 game board"></div>
+          <svg class="winline" id="winSvg" viewBox="0 0 120 120" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <button type="button" class="badge" id="reviewBadge" hidden>Replay · resume</button>
         </div>
       </div>
-      <p class="caption">✕ moves first · five in a row wins · six or more also counts</p>
-    </section>
+      <p class="caption">◯ moves first · five in a row wins · six or more also counts</p>
+    </div>
 
     <aside class="panel">
       <div class="card">
         <div class="status">
           <div class="mini" id="turnMini" aria-hidden="true"></div>
           <div>
-            <div class="status-title" id="statusTitle">Coin toss</div>
-            <div class="status-sub" id="statusSub">Deciding who takes ✕</div>
+            <div class="status-title" id="statusTitle">Your turn</div>
+            <div class="status-sub" id="statusSub">◯ White · move 1</div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head"><span>Match</span><span id="modeHint">vs computer</span></div>
-        <div class="seg" id="segMode">
-          <button type="button" data-mode="ai" class="on">vs Computer</button>
-          <button type="button" data-mode="local">2 Players</button>
-        </div>
-        <div class="seg seg-sm" id="segDiff">
-          <button type="button" data-diff="easy">Easy</button>
-          <button type="button" data-diff="medium" class="on">Medium</button>
-          <button type="button" data-diff="hard">Hard</button>
-        </div>
-        <div class="score">
-          <div class="score-item"><b id="scoreA">0</b><small id="labelA">You</small></div>
-          <div class="score-item"><b id="scoreB">0</b><small id="labelB">AI</small></div>
-          <div class="score-item"><b id="scoreC">0</b><small>Draws</small></div>
-        </div>
         <div class="actions">
           <button type="button" class="btn primary" id="btnNew">New game</button>
           <button type="button" class="btn" id="btnUndo">Undo</button>
           <button type="button" class="btn" id="btnHint">Hint</button>
         </div>
+        <div class="actions actions-2">
+          <button type="button" class="btn" id="btnMoves">Moves</button>
+          <button type="button" class="btn ghost" id="btnMenu">Menu</button>
+        </div>
       </div>
 
-      <div class="card log-card">
-        <div class="card-head"><span>Replay &amp; moves</span><span id="reviewLabel">Live</span></div>
-        <input type="range" id="reviewRange" min="0" max="0" value="0" aria-label="Replay position" disabled>
-        <button type="button" class="btn ghost" id="btnLive" hidden>Back to live</button>
-        <div class="move-log" id="moveLog"></div>
+      <div class="card">
+        <div class="card-head"><span>How to play</span></div>
+        <ul class="help-list">
+          <li><b>◯ O</b> always moves first, then <b>✕ X</b>.</li>
+          <li>Line up <b>five</b> stones — row, column or diagonal.</li>
+          <li>Six or more in a row also wins; a full board is a draw.</li>
+          <li><b>Hint</b> asks the engine, <b>Undo</b> rewinds your last pair.</li>
+        </ul>
       </div>
     </aside>
-  </main>
+  </section>
 </div>
 
-<div class="overlay" id="tossOverlay" hidden>
-  <div class="toss">
-    <p class="eyebrow">Coin toss</p>
-    <div class="coin-wrap">
-      <div class="coin" id="coin">
-        <div class="face front">H</div>
-        <div class="face back">T</div>
-      </div>
+<!-- ============================ moves dialog ============================ -->
+<div class="overlay" id="movesOverlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="movesTitle">
+    <div class="dialog-head">
+      <h3 id="movesTitle">Moves</h3>
+      <button type="button" class="btn icon" id="btnCloseMoves">Close</button>
     </div>
-    <h2 id="tossResult">Flipping…</h2>
-    <p id="tossSub">Heads → ✕ moves first · Tails → ◯ moves first</p>
-    <button type="button" class="btn primary" id="btnTossGo" disabled>Start playing</button>
+    <div class="dialog-sub">
+      <span id="reviewLabel">Live</span>
+      <button type="button" class="btn ghost" id="btnLive" hidden>Back to live</button>
+    </div>
+    <input type="range" id="reviewRange" min="0" max="0" value="0" aria-label="Replay position" disabled>
+    <div class="move-log" id="moveLog"></div>
   </div>
 </div>
 
@@ -527,19 +589,24 @@ input[type=range]:disabled{opacity:.35}
   'use strict';
 
   /* ============================ constants ============================ */
-  var SIZE = 15;
+  var SIZE = 12;
   var N = SIZE * SIZE;
   var NEED = 5;
-  var BLACK = 1;
-  var WHITE = 2;
-  var COLS = 'ABCDEFGHIJKLMNO'.split('');
+  var X = 1;
+  var O = 2;
+  var FIRST = O;                       /* ◯ always opens the game */
+  var CENTER = Math.floor(SIZE / 2);
+  var MID = (SIZE - 1) / 2;
+  var COLS = 'ABCDEFGHIJKL'.split('');
   var DIRS = [[0, 1], [1, 0], [1, 1], [1, -1]];
-  var KEY_SETTINGS = 'btt.settings.v1';
-  var KEY_STATS = 'btt.stats.v1';
+  var KEY_SETTINGS = 'btt.settings.v2';
+  var KEY_STATS = 'btt.stats.v2';
 
   /* ============================== dom ============================== */
   function $(id) { return document.getElementById(id); }
 
+  var landingEl = $('landing');
+  var gameEl = $('game');
   var boardEl = $('board');
   var winSvg = $('winSvg');
   var colCoords = $('colCoords');
@@ -548,17 +615,20 @@ input[type=range]:disabled{opacity:.35}
   var turnMini = $('turnMini');
   var statusTitle = $('statusTitle');
   var statusSub = $('statusSub');
+  var sidePick = $('sidePick');
+  var sideNote = $('sideNote');
   var segMode = $('segMode');
   var segDiff = $('segDiff');
-  var modeHint = $('modeHint');
-  var scoreA = $('scoreA');
-  var scoreB = $('scoreB');
-  var scoreC = $('scoreC');
-  var labelA = $('labelA');
-  var labelB = $('labelB');
+  var diffRow = $('diffRow');
+  var landingRecord = $('landingRecord');
+  var btnStart = $('btnStart');
   var btnNew = $('btnNew');
   var btnUndo = $('btnUndo');
   var btnHint = $('btnHint');
+  var btnMoves = $('btnMoves');
+  var btnMenu = $('btnMenu');
+  var movesOverlay = $('movesOverlay');
+  var btnCloseMoves = $('btnCloseMoves');
   var reviewRange = $('reviewRange');
   var reviewLabel = $('reviewLabel');
   var btnLive = $('btnLive');
@@ -566,14 +636,8 @@ input[type=range]:disabled{opacity:.35}
   var btnMute = $('btnMute');
   var btnInstall = $('btnInstall');
   var toastEl = $('toast');
-  var tossOverlay = $('tossOverlay');
-  var coin = $('coin');
-  var tossResult = $('tossResult');
-  var tossSub = $('tossSub');
-  var btnTossGo = $('btnTossGo');
 
   var cells = [];
-  var tossTimer = 0;
   var toastTimer = 0;
 
   /* ============================= state ============================= */
@@ -581,8 +645,8 @@ input[type=range]:disabled{opacity:.35}
     moves: [],
     mode: 'ai',
     difficulty: 'medium',
-    humanSide: BLACK,
-    aiSide: WHITE,
+    mySide: O,
+    aiSide: X,
     over: false,
     winner: 0,
     winCells: null,
@@ -593,7 +657,8 @@ input[type=range]:disabled{opacity:.35}
     ready: false,
     muted: false,
     stats: null,
-    aiToken: 0
+    aiToken: 0,
+    view: 'landing'
   };
 
   function defaultStats() {
@@ -603,7 +668,7 @@ input[type=range]:disabled{opacity:.35}
         medium: { you: 0, ai: 0, draws: 0 },
         hard: { you: 0, ai: 0, draws: 0 }
       },
-      local: { black: 0, white: 0, draws: 0 }
+      local: { x: 0, o: 0, draws: 0 }
     };
   }
 
@@ -619,12 +684,16 @@ input[type=range]:disabled{opacity:.35}
   }
 
   function currentTurn() {
-    return S.moves.length % 2 === 0 ? BLACK : WHITE;
+    return S.moves.length % 2 === 0 ? FIRST : 3 - FIRST;
   }
 
+  function symbolOf(side) { return side === X ? '✕' : '◯'; }
+  function glyphClass(side) { return side === X ? 'x' : 'o'; }
+  function colourOf(side) { return side === X ? '✕ Black' : '◯ White'; }
+
   function sideName(side) {
-    if (S.mode === 'local') return side === S.humanSide ? 'Player 1' : 'Player 2';
-    return side === S.humanSide ? 'You' : 'Computer';
+    if (S.mode === 'local') return side === S.mySide ? 'Player 1' : 'Player 2';
+    return side === S.mySide ? 'You' : 'Computer';
   }
 
   function findWin(board, r, c, p) {
@@ -702,7 +771,7 @@ input[type=range]:disabled{opacity:.35}
     for (var i = 0; i < N; i++) {
       if (board[i]) { any = true; break; }
     }
-    if (!any) return [{ r: 7, c: 7 }];
+    if (!any) return [{ r: CENTER, c: CENTER }];
 
     var out = [];
     var seen = new Uint8Array(N);
@@ -748,7 +817,7 @@ input[type=range]:disabled{opacity:.35}
       win: atkMax >= 1e8,
       lose: defMax >= 1e8,
       value: atkTotal + defTotal * 0.85,
-      center: (7 - Math.abs(r - 7)) + (7 - Math.abs(c - 7))
+      center: SIZE - Math.abs(r - MID) - Math.abs(c - MID)
     };
   }
 
@@ -876,14 +945,9 @@ input[type=range]:disabled{opacity:.35}
       osc.start(t);
       osc.stop(t + dur + 0.03);
     },
-    place: function (p) { this.play(p === BLACK ? 210 : 320, 0.07, 'triangle', 0.07); },
+    place: function (p) { this.play(p === X ? 210 : 320, 0.07, 'triangle', 0.07); },
     ui: function () { this.play(660, 0.06, 'sine', 0.04); },
     hint: function () { this.play(1180, 0.07, 'sine', 0.05); },
-    toss: function () { this.play(980, 0.05, 'square', 0.03); },
-    tossLand: function () {
-      this.play(523, 0.12, 'sine', 0.06);
-      this.play(784, 0.18, 'sine', 0.05, 0.07);
-    },
     win: function () {
       var notes = [523, 659, 784, 1047];
       for (var i = 0; i < notes.length; i++) this.play(notes[i], 0.2, 'sine', 0.07, i * 0.085);
@@ -908,13 +972,13 @@ input[type=range]:disabled{opacity:.35}
     x2 += dx / len * 4;
     y2 += dy / len * 4;
 
-    var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    ln.setAttribute('x1', x1);
-    ln.setAttribute('y1', y1);
-    ln.setAttribute('x2', x2);
-    ln.setAttribute('y2', y2);
-    ln.setAttribute('class', 'wline-under');
-    winSvg.appendChild(ln);
+    var under = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    under.setAttribute('x1', x1);
+    under.setAttribute('y1', y1);
+    under.setAttribute('x2', x2);
+    under.setAttribute('y2', y2);
+    under.setAttribute('class', 'wline-under');
+    winSvg.appendChild(under);
 
     var top = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     top.setAttribute('x1', x1);
@@ -933,11 +997,11 @@ input[type=range]:disabled{opacity:.35}
     var lastCell = k > 0 ? S.moves[k - 1].r * SIZE + S.moves[k - 1].c : -1;
 
     var turn = currentTurn();
-    var interactive = !S.over && (S.mode === 'local' || turn === S.humanSide);
+    var interactive = !S.over && (S.mode === 'local' || turn === S.mySide);
     var locked = !S.ready || reviewing || S.thinking || !interactive;
     boardEl.classList.toggle('locked', locked);
 
-    boardEl.style.setProperty('--ghost', turn === BLACK
+    boardEl.style.setProperty('--ghost', turn === X
       ? 'radial-gradient(circle at 34% 27%,#7b8494,#0d1014)'
       : 'radial-gradient(circle at 34% 27%,#ffffff,#cfcabe)');
 
@@ -958,16 +1022,16 @@ input[type=range]:disabled{opacity:.35}
       if (v) {
         cell.classList.add('filled');
         var st = document.createElement('div');
-        st.className = 'stone ' + (v === BLACK ? 'x' : 'o');
+        st.className = 'stone ' + glyphClass(v);
         var mk = document.createElement('span');
         mk.className = 'mark';
-        mk.textContent = v === BLACK ? '✕' : '◯';
+        mk.textContent = symbolOf(v);
         st.appendChild(mk);
         cell.appendChild(st);
         if (i === lastCell) cell.classList.add('last');
         if (winIdx.has(i)) cell.classList.add('win');
         cell.setAttribute('aria-label',
-          COLS[col] + (row + 1) + ', ' + (v === BLACK ? '✕ black' : '◯ white') +
+          COLS[col] + (row + 1) + ', ' + (v === X ? '✕ black' : '◯ white') +
           (winIdx.has(i) ? ', part of the winning line' : ''));
       } else {
         cell.setAttribute('aria-label', COLS[col] + (row + 1) + ', empty');
@@ -988,63 +1052,47 @@ input[type=range]:disabled{opacity:.35}
 
     turnMini.textContent = '';
     var miniStone = document.createElement('div');
-    miniStone.className = 'stone ' + (turn === BLACK ? 'x' : 'o');
+    miniStone.className = 'stone ' + glyphClass(turn);
     var miniMark = document.createElement('span');
     miniMark.className = 'mark';
-    miniMark.textContent = turn === BLACK ? '✕' : '◯';
+    miniMark.textContent = symbolOf(turn);
     miniStone.appendChild(miniMark);
     turnMini.appendChild(miniStone);
 
     var title;
     var sub;
 
-    if (!S.ready) {
-      title = 'Coin toss';
-      sub = 'Deciding who takes ✕';
-    } else if (reviewing) {
+    if (reviewing) {
       title = 'Replaying · move ' + k;
-      sub = 'Showing ' + k + ' of ' + live + ' · board is read-only';
+      sub = 'Showing ' + k + ' of ' + live + ' · close the list to resume';
     } else if (S.over) {
       if (S.winner) {
-        if (S.mode === 'ai') title = S.winner === S.humanSide ? 'You win!' : 'Computer wins';
+        if (S.mode === 'ai') title = S.winner === S.mySide ? 'You win!' : 'Computer wins';
         else title = sideName(S.winner) + ' wins!';
-        sub = (S.winner === BLACK ? '✕ Black' : '◯ White') + ' lined up five';
+        sub = colourOf(S.winner) + ' lined up five';
       } else {
         title = 'Draw';
         sub = 'The board is full';
       }
     } else if (S.thinking) {
       title = 'Computer is thinking';
-      sub = (turn === BLACK ? '✕' : '◯') + ' to move';
+      sub = colourOf(turn) + ' to move';
     } else if (S.mode === 'ai') {
-      title = turn === S.humanSide ? 'Your turn' : "Computer's turn";
-      sub = (turn === BLACK ? '✕ Black' : '◯ White') + ' · move ' + (live + 1);
+      title = turn === S.mySide ? 'Your turn' : "Computer's turn";
+      sub = colourOf(turn) + ' · move ' + (live + 1);
     } else {
       title = sideName(turn) + "'s turn";
-      sub = (turn === BLACK ? '✕ Black' : '◯ White') + ' · move ' + (live + 1);
+      sub = colourOf(turn) + ' · move ' + (live + 1);
     }
 
     statusTitle.textContent = title;
     statusSub.textContent = sub;
 
-    var st = S.mode === 'ai' ? S.stats.ai[S.difficulty] : S.stats.local;
-    if (S.mode === 'ai') {
-      scoreA.textContent = st.you;
-      scoreB.textContent = st.ai;
-      labelA.textContent = 'You';
-      labelB.textContent = 'AI';
-    } else {
-      scoreA.textContent = st.black;
-      scoreB.textContent = st.white;
-      labelA.textContent = '✕ Black';
-      labelB.textContent = '◯ White';
-    }
-    scoreC.textContent = st.draws;
-
+    /* move list + replay */
     reviewRange.max = String(live);
     reviewRange.value = String(k);
     reviewRange.disabled = live === 0;
-    reviewLabel.textContent = reviewing ? k + ' / ' + live : 'Live';
+    reviewLabel.textContent = reviewing ? 'Showing ' + k + ' / ' + live : 'Live · ' + live + ' moves';
     btnLive.hidden = !reviewing;
 
     moveLog.textContent = '';
@@ -1064,7 +1112,7 @@ input[type=range]:disabled{opacity:.35}
           idx.className = 'mv-idx';
           idx.textContent = String(i2 + 1);
           var dot = document.createElement('span');
-          dot.className = 'mv-stone ' + (m.p === BLACK ? 'x' : 'o');
+          dot.className = 'mv-stone ' + glyphClass(m.p);
           var co = document.createElement('span');
           co.textContent = COLS[m.c] + (m.r + 1);
           el.appendChild(idx);
@@ -1079,14 +1127,11 @@ input[type=range]:disabled{opacity:.35}
       }
       if (!reviewing) moveLog.scrollTop = moveLog.scrollHeight;
     }
-
-    modeHint.textContent = S.mode === 'ai' ? 'vs computer · ' + S.difficulty : 'two players · one device';
-    segDiff.style.display = S.mode === 'ai' ? '' : 'none';
   }
 
   /* ============================== flow ============================== */
   function commitMove(r, c) {
-    if (!S.ready || S.over) return;
+    if (!S.ready || S.over || S.view !== 'game') return;
     if (S.reviewIndex < S.moves.length) S.reviewIndex = S.moves.length;
 
     var b = buildBoard(S.moves.length);
@@ -1120,7 +1165,7 @@ input[type=range]:disabled{opacity:.35}
   }
 
   function maybeAI() {
-    if (S.mode !== 'ai' || !S.ready || S.over || S.thinking) return;
+    if (S.mode !== 'ai' || !S.ready || S.over || S.thinking || S.view !== 'game') return;
     if (currentTurn() !== S.aiSide) return;
     if (S.reviewIndex < S.moves.length) return;
 
@@ -1145,7 +1190,7 @@ input[type=range]:disabled{opacity:.35}
   }
 
   function undo() {
-    if (!S.moves.length) return;
+    if (!S.moves.length || S.view !== 'game') return;
     S.aiToken++;
     S.thinking = false;
     S.hintAt = -1;
@@ -1171,13 +1216,13 @@ input[type=range]:disabled{opacity:.35}
   }
 
   function hint() {
-    if (!S.ready || S.over || S.thinking) return;
+    if (!S.ready || S.over || S.thinking || S.view !== 'game') return;
     if (S.reviewIndex < S.moves.length) {
       S.reviewIndex = S.moves.length;
       render();
     }
     var turn = currentTurn();
-    if (S.mode === 'ai' && turn !== S.humanSide) return;
+    if (S.mode === 'ai' && turn !== S.mySide) return;
 
     var b = buildBoard(S.moves.length);
     var mv = chooseMove(b, turn, 'hard');
@@ -1197,7 +1242,8 @@ input[type=range]:disabled{opacity:.35}
     }, 2800);
   }
 
-  function newGame(withToss) {
+  function startGame() {
+    S.aiSide = 3 - S.mySide;
     S.aiToken++;
     S.moves = [];
     S.over = false;
@@ -1207,64 +1253,84 @@ input[type=range]:disabled{opacity:.35}
     S.animateAt = -1;
     S.hintAt = -1;
     S.thinking = false;
-    S.ready = false;
-    render();
-
-    if (withToss === false) {
-      S.ready = true;
-      render();
-      maybeAI();
-    } else {
-      showToss();
-    }
-  }
-
-  function showToss() {
-    var heads = Math.random() < 0.5;
-    S.ready = false;
-    S.thinking = false;
-    S.hintAt = -1;
-    S.aiToken++;
-
-    tossOverlay.hidden = false;
-    coin.className = 'coin';
-    tossResult.textContent = 'Flipping…';
-    tossSub.textContent = 'Heads → ✕ moves first · Tails → ◯ moves first';
-    btnTossGo.disabled = true;
-
-    void coin.offsetWidth;
-    requestAnimationFrame(function () {
-      coin.classList.add(heads ? 'spin-h' : 'spin-t');
-    });
-    audio.toss();
-
-    clearTimeout(tossTimer);
-    tossTimer = setTimeout(function () {
-      S.humanSide = heads ? BLACK : WHITE;
-      S.aiSide = 3 - S.humanSide;
-
-      tossResult.textContent = heads ? 'Heads' : 'Tails';
-      if (S.mode === 'local') {
-        tossSub.innerHTML = heads
-          ? 'Player 1 takes <b>✕ black</b> and moves first.'
-          : 'Player 1 takes <b>◯ white</b> — Player 2 takes <b>✕ black</b> and moves first.';
-      } else {
-        tossSub.innerHTML = heads
-          ? 'You take <b>✕ black</b> and move first.'
-          : 'You take <b>◯ white</b>. The computer opens with <b>✕ black</b>.';
-      }
-      btnTossGo.disabled = false;
-      audio.tossLand();
-    }, 1820);
-  }
-
-  function startFromToss() {
-    if (btnTossGo.disabled) return;
-    tossOverlay.hidden = true;
     S.ready = true;
+    closeMoves();
+    showView('game');
     render();
-    audio.ui();
     maybeAI();
+    audio.ui();
+  }
+
+  function goMenu() {
+    S.aiToken++;
+    S.thinking = false;
+    S.ready = false;
+    closeMoves();
+    saveSettings();
+    updateLanding();
+    showView('landing');
+    audio.ui();
+  }
+
+  function showView(view) {
+    S.view = view;
+    landingEl.hidden = view !== 'landing';
+    gameEl.hidden = view !== 'game';
+  }
+
+  function openMoves() {
+    movesOverlay.hidden = false;
+    updatePanel(S.reviewIndex < S.moves.length, Math.min(S.reviewIndex, S.moves.length), S.moves.length);
+    audio.ui();
+  }
+
+  function closeMoves() {
+    movesOverlay.hidden = true;
+  }
+
+  /* ============================= landing ============================= */
+  function updateLanding() {
+    var sideBtns = sidePick.querySelectorAll('[data-side]');
+    for (var i = 0; i < sideBtns.length; i++) {
+      var on = Number(sideBtns[i].dataset.side) === S.mySide;
+      sideBtns[i].classList.toggle('on', on);
+      sideBtns[i].setAttribute('aria-pressed', String(on));
+    }
+
+    var modeBtns = segMode.querySelectorAll('[data-mode]');
+    for (var m = 0; m < modeBtns.length; m++) {
+      modeBtns[m].classList.toggle('on', modeBtns[m].dataset.mode === S.mode);
+    }
+    var diffBtns = segDiff.querySelectorAll('[data-diff]');
+    for (var d = 0; d < diffBtns.length; d++) {
+      diffBtns[d].classList.toggle('on', diffBtns[d].dataset.diff === S.difficulty);
+    }
+
+    diffRow.hidden = S.mode !== 'ai';
+
+    var firstSym = symbolOf(FIRST);
+    var mySym = symbolOf(S.mySide);
+
+    if (S.mode === 'ai') {
+      sideNote.innerHTML = S.mySide === FIRST
+        ? 'You play <b>' + mySym + '</b> and move first.'
+        : 'You play <b>' + mySym + '</b>. The computer opens with <b>' + firstSym + '</b>.';
+    } else {
+      sideNote.innerHTML = 'Player 1 plays <b>' + mySym + '</b>. <b>' + firstSym + '</b> always moves first.';
+    }
+
+    var st = S.mode === 'ai' ? S.stats.ai[S.difficulty] : S.stats.local;
+    if (S.mode === 'ai') {
+      var played = st.you + st.ai + st.draws;
+      landingRecord.textContent = played
+        ? 'vs computer · ' + S.difficulty + ' — you ' + st.you + ' · ai ' + st.ai + ' · draws ' + st.draws
+        : 'No games vs the computer at ' + S.difficulty + ' yet';
+    } else {
+      var playedL = st.x + st.o + st.draws;
+      landingRecord.textContent = playedL
+        ? '2 players — ' + symbolOf(X) + ' ' + st.x + ' · ' + symbolOf(O) + ' ' + st.o + ' · draws ' + st.draws
+        : 'No two-player games yet';
+    }
   }
 
   /* ============================ persistence ============================ */
@@ -1276,6 +1342,7 @@ input[type=range]:disabled{opacity:.35}
       var s = JSON.parse(localStorage.getItem(KEY_SETTINGS) || '{}');
       if (s.mode === 'ai' || s.mode === 'local') S.mode = s.mode;
       if (s.difficulty === 'easy' || s.difficulty === 'medium' || s.difficulty === 'hard') S.difficulty = s.difficulty;
+      if (s.side === X || s.side === O) S.mySide = s.side;
       if (typeof s.muted === 'boolean') S.muted = s.muted;
     } catch (e) { /* ignore */ }
 
@@ -1288,8 +1355,8 @@ input[type=range]:disabled{opacity:.35}
           S.stats.ai[diffs[i]] = { you: num(src.you), ai: num(src.ai), draws: num(src.draws) };
         }
         S.stats.local = {
-          black: num(raw.local.black),
-          white: num(raw.local.white),
+          x: num(raw.local.x),
+          o: num(raw.local.o),
           draws: num(raw.local.draws)
         };
       }
@@ -1301,6 +1368,7 @@ input[type=range]:disabled{opacity:.35}
       localStorage.setItem(KEY_SETTINGS, JSON.stringify({
         mode: S.mode,
         difficulty: S.difficulty,
+        side: S.mySide,
         muted: S.muted
       }));
     } catch (e) { /* ignore */ }
@@ -1314,13 +1382,13 @@ input[type=range]:disabled{opacity:.35}
     if (S.mode === 'ai') {
       var st = S.stats.ai[S.difficulty];
       if (!S.winner) st.draws++;
-      else if (S.winner === S.humanSide) st.you++;
+      else if (S.winner === S.mySide) st.you++;
       else st.ai++;
     } else {
       var lt = S.stats.local;
       if (!S.winner) lt.draws++;
-      else if (S.winner === BLACK) lt.black++;
-      else lt.white++;
+      else if (S.winner === X) lt.x++;
+      else lt.o++;
     }
     saveStats();
   }
@@ -1331,17 +1399,6 @@ input[type=range]:disabled{opacity:.35}
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
-  }
-
-  function updateSegs() {
-    var modeBtns = segMode.querySelectorAll('[data-mode]');
-    for (var i = 0; i < modeBtns.length; i++) {
-      modeBtns[i].classList.toggle('on', modeBtns[i].dataset.mode === S.mode);
-    }
-    var diffBtns = segDiff.querySelectorAll('[data-diff]');
-    for (var j = 0; j < diffBtns.length; j++) {
-      diffBtns[j].classList.toggle('on', diffBtns[j].dataset.diff === S.difficulty);
-    }
   }
 
   function updateMute() {
@@ -1390,7 +1447,7 @@ input[type=range]:disabled{opacity:.35}
       var r = Number(cell.dataset.r);
       var c = Number(cell.dataset.c);
       var turn = currentTurn();
-      if (S.mode === 'ai' && turn !== S.humanSide) return;
+      if (S.mode === 'ai' && turn !== S.mySide) return;
       commitMove(r, c);
     });
 
@@ -1417,13 +1474,56 @@ input[type=range]:disabled{opacity:.35}
       cells[nr * SIZE + nc].focus();
     });
 
-    btnNew.addEventListener('click', function () {
+    /* landing */
+    sidePick.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-side]') : null;
+      if (!b) return;
+      var side = Number(b.dataset.side);
+      if (side === S.mySide) return;
+      S.mySide = side;
+      saveSettings();
+      updateLanding();
       audio.ui();
-      newGame(true);
     });
 
+    segMode.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-mode]') : null;
+      if (!b || b.dataset.mode === S.mode) return;
+      S.mode = b.dataset.mode;
+      saveSettings();
+      updateLanding();
+      audio.ui();
+    });
+
+    segDiff.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-diff]') : null;
+      if (!b || b.dataset.diff === S.difficulty) return;
+      S.difficulty = b.dataset.diff;
+      saveSettings();
+      updateLanding();
+      audio.ui();
+    });
+
+    btnStart.addEventListener('click', startGame);
+
+    /* game controls */
+    btnNew.addEventListener('click', function () {
+      startGame();
+    });
     btnUndo.addEventListener('click', undo);
     btnHint.addEventListener('click', hint);
+    btnMoves.addEventListener('click', openMoves);
+    btnMenu.addEventListener('click', goMenu);
+
+    reviewBadge.addEventListener('click', function () {
+      S.reviewIndex = S.moves.length;
+      render();
+    });
+
+    btnCloseMoves.addEventListener('click', closeMoves);
+    movesOverlay.addEventListener('click', function (e) {
+      if (e.target === movesOverlay) closeMoves();
+    });
 
     btnLive.addEventListener('click', function () {
       S.reviewIndex = S.moves.length;
@@ -1435,25 +1535,6 @@ input[type=range]:disabled{opacity:.35}
       render();
     });
 
-    segMode.addEventListener('click', function (e) {
-      var b = e.target.closest ? e.target.closest('button[data-mode]') : null;
-      if (!b || b.dataset.mode === S.mode) return;
-      S.mode = b.dataset.mode;
-      updateSegs();
-      saveSettings();
-      newGame(true);
-    });
-
-    segDiff.addEventListener('click', function (e) {
-      var b = e.target.closest ? e.target.closest('button[data-diff]') : null;
-      if (!b || b.dataset.diff === S.difficulty) return;
-      S.difficulty = b.dataset.diff;
-      updateSegs();
-      saveSettings();
-      render();
-      maybeAI();
-    });
-
     btnMute.addEventListener('click', function () {
       S.muted = !S.muted;
       saveSettings();
@@ -1461,14 +1542,14 @@ input[type=range]:disabled{opacity:.35}
       if (!S.muted) audio.ui();
     });
 
-    btnTossGo.addEventListener('click', startFromToss);
-
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !tossOverlay.hidden && !btnTossGo.disabled) startFromToss();
+      if (e.key === 'Escape' && !movesOverlay.hidden) closeMoves();
     });
   }
 
   /* ============================== install ============================== */
+  var deferredInstall = null;
+
   function setupInstall() {
     var standalone = window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true;
@@ -1476,26 +1557,25 @@ input[type=range]:disabled{opacity:.35}
 
     var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    var deferred = null;
 
     if (isIOS) btnInstall.hidden = false;
 
     window.addEventListener('beforeinstallprompt', function (e) {
       e.preventDefault();
-      deferred = e;
+      deferredInstall = e;
       btnInstall.hidden = false;
     });
 
     window.addEventListener('appinstalled', function () {
-      deferred = null;
+      deferredInstall = null;
       btnInstall.hidden = true;
       toast('Installed — open it from your home screen.');
     });
 
     btnInstall.addEventListener('click', function () {
-      if (deferred) {
-        deferred.prompt();
-        deferred = null;
+      if (deferredInstall) {
+        deferredInstall.prompt();
+        deferredInstall = null;
         btnInstall.hidden = true;
       } else {
         toast('On iPhone or iPad: Share → Add to Home Screen');
@@ -1515,13 +1595,13 @@ input[type=range]:disabled{opacity:.35}
   buildCells();
   buildCoords();
   loadSettings();
-  updateSegs();
+  updateLanding();
   updateMute();
   bind();
   setupInstall();
   registerServiceWorker();
-  newGame(true);
-
+  showView('landing');
+  render();
 })();
 </script>
 </body>
