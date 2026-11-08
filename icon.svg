@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Big Tic-Tac-Toe">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f141b"/>
+      <stop offset="1" stop-color="#1b2330"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="52%" r="40%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+  <g stroke="#ffffff" stroke-opacity=".05" stroke-width="2">
+    <path d="M110 0V512M207 0V512M305 0V512M402 0V512"/>
+    <path d="M0 110H512M0 207H512M0 305H512M0 402H512"/>
+  </g>
+  <rect width="512" height="512" rx="110" fill="url(#glow)"/>
+  <g fill="none" stroke-width="39" stroke-linecap="round">
+    <path d="M85.5 146.9 226.5 288.3" stroke="#f0b64b"/>
+    <path d="M226.5 146.9 85.5 288.3" stroke="#f0b64b"/>
+    <circle cx="355.8" cy="299.5" r="70.7" stroke="#5eead4"/>
+  </g>
+</svg>
