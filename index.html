@@ -453,6 +453,57 @@ input[type=range]:disabled{opacity:.35}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms !important;transition-duration:.001ms !important}
 }
+
+/* ============================= zen mode ============================= */
+body.zen-mode{
+  display:block;
+  padding:0;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  --zen-top:calc(46px + env(safe-area-inset-top));
+  --cell:min(
+    calc((100vw - 20px - var(--gutter) - 3px - env(safe-area-inset-left) - env(safe-area-inset-right)) / 12),
+    calc((100vh - var(--zen-top) - 10px - 19px) / 12)
+  );
+  --cell:min(
+    calc((100vw - 20px - var(--gutter) - 3px - env(safe-area-inset-left) - env(safe-area-inset-right)) / 12),
+    calc((100dvh - var(--zen-top) - 10px - 19px) / 12)
+  );
+  --board:calc(var(--cell) * 12);
+}
+body.zen-mode .app{
+  max-width:none;
+  height:100%;
+  padding:var(--zen-top) 10px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+body.zen-mode header,
+body.zen-mode .panel,
+body.zen-mode .caption{display:none}
+body.zen-mode .game{display:block;width:100%;height:100%}
+body.zen-mode .board-area{height:100%;justify-content:center;gap:0}
+.zen-exit{
+  position:fixed;
+  z-index:90;
+  top:max(8px, env(safe-area-inset-top));
+  right:max(10px, calc(env(safe-area-inset-right) + 4px));
+  appearance:none;
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(12,16,22,.72);
+  color:rgba(233,237,244,.72);
+  font:500 11.5px/1.2 ui-sans-serif,system-ui,sans-serif;
+  letter-spacing:.03em;
+  backdrop-filter:blur(6px);
+  cursor:pointer;
+  opacity:.7;
+  transition:opacity .15s, background .15s, color .15s;
+}
+.zen-exit:hover,.zen-exit:focus-visible{opacity:1;color:var(--ink);background:rgba(20,26,34,.92)}
 </style>
 </head>
 <body>
@@ -547,8 +598,9 @@ input[type=range]:disabled{opacity:.35}
           <button type="button" class="btn" id="btnUndo">Undo</button>
           <button type="button" class="btn" id="btnHint">Hint</button>
         </div>
-        <div class="actions actions-2">
+        <div class="actions">
           <button type="button" class="btn" id="btnMoves">Moves</button>
+          <button type="button" class="btn" id="btnZen">Zen</button>
           <button type="button" class="btn ghost" id="btnMenu">Menu</button>
         </div>
       </div>
@@ -565,6 +617,8 @@ input[type=range]:disabled{opacity:.35}
     </aside>
   </section>
 </div>
+
+<button type="button" class="zen-exit" id="btnExitZen" hidden>Exit zen</button>
 
 <!-- ============================ moves dialog ============================ -->
 <div class="overlay" id="movesOverlay" hidden>
@@ -627,6 +681,8 @@ input[type=range]:disabled{opacity:.35}
   var btnHint = $('btnHint');
   var btnMoves = $('btnMoves');
   var btnMenu = $('btnMenu');
+  var btnZen = $('btnZen');
+  var btnExitZen = $('btnExitZen');
   var movesOverlay = $('movesOverlay');
   var btnCloseMoves = $('btnCloseMoves');
   var reviewRange = $('reviewRange');
@@ -656,6 +712,7 @@ input[type=range]:disabled{opacity:.35}
     thinking: false,
     ready: false,
     muted: false,
+    zen: false,
     stats: null,
     aiToken: 0,
     view: 'landing'
@@ -1243,6 +1300,7 @@ input[type=range]:disabled{opacity:.35}
   }
 
   function startGame() {
+    exitZen(true);
     S.aiSide = 3 - S.mySide;
     S.aiToken++;
     S.moves = [];
@@ -1262,6 +1320,7 @@ input[type=range]:disabled{opacity:.35}
   }
 
   function goMenu() {
+    exitZen(true);
     S.aiToken++;
     S.thinking = false;
     S.ready = false;
@@ -1276,6 +1335,23 @@ input[type=range]:disabled{opacity:.35}
     S.view = view;
     landingEl.hidden = view !== 'landing';
     gameEl.hidden = view !== 'game';
+  }
+
+  function enterZen() {
+    if (S.view !== 'game') return;
+    closeMoves();
+    S.zen = true;
+    document.body.classList.add('zen-mode');
+    btnExitZen.hidden = false;
+    audio.ui();
+  }
+
+  function exitZen(silent) {
+    if (!S.zen) return;
+    S.zen = false;
+    document.body.classList.remove('zen-mode');
+    btnExitZen.hidden = true;
+    if (silent !== true) audio.ui();
   }
 
   function openMoves() {
@@ -1513,6 +1589,8 @@ input[type=range]:disabled{opacity:.35}
     btnUndo.addEventListener('click', undo);
     btnHint.addEventListener('click', hint);
     btnMoves.addEventListener('click', openMoves);
+    btnZen.addEventListener('click', enterZen);
+    btnExitZen.addEventListener('click', function () { exitZen(); });
     btnMenu.addEventListener('click', goMenu);
 
     reviewBadge.addEventListener('click', function () {
@@ -1543,7 +1621,9 @@ input[type=range]:disabled{opacity:.35}
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !movesOverlay.hidden) closeMoves();
+      if (e.key !== 'Escape') return;
+      if (!movesOverlay.hidden) closeMoves();
+      else if (S.zen) exitZen();
     });
   }
 

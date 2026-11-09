@@ -14,6 +14,7 @@ Play: **https://khvr1993.github.io/tic_tac_toe_big/**
 - **Hints** — ask the engine for a suggestion; the cell pulses and the coordinate appears in a toast.
 - **Undo** — in AI mode it rewinds the pair so the turn comes back to you.
 - **Moves popup** — a button opens the full move list with a replay scrubber, so the board stays uncluttered during play.
+- **Zen mode** — a **Zen** button hides the header and panel and blows the board up to fill the screen, leaving only the board. **Exit zen** (or `Esc`) brings the controls back.
 - **Local stats** — wins/losses/draws per mode and difficulty, persisted in `localStorage`.
 - **Polish** — animated stone drops, last-move ring, winning line, sound toggle, keyboard navigation (arrows + Enter), responsive board.
 - **Installable PWA** — add it to your phone's home screen and play offline.
@@ -43,8 +44,9 @@ On desktop Chrome/Edge the same **Install app** button installs it as a standalo
 ## Screens
 
 1. **Landing** — choose ✕ or ◯, vs Computer or 2 Players, difficulty, then Start.
-2. **Game** — the board plus a slim panel: turn status, New game / Undo / Hint, Moves and Menu.
-3. **Moves popup** — the numbered move list and replay slider.
+2. **Game** — the board plus a slim panel: turn status, New game / Undo / Hint, Moves, Zen and Menu.
+3. **Zen** — board only, scaled to the viewport, with an Exit zen pill in the corner.
+4. **Moves popup** — the numbered move list and replay slider.
 
 ## Run locally
 
